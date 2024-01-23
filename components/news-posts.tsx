@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { FadeLoader } from "react-spinners";
 import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
+
 interface NewsPostsProps {
   id: string;
   owner_id: string;
@@ -33,10 +34,13 @@ const NewsPosts = ({ data, status }: Props) => {
   const [ref, inView] = useInView();
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
   const [newData, setNewData] = useState<NewsPostsProps[]>(data);
 
   useEffect(() => {
     const getData = async () => {
+      if (!hasMoreData || isLoading) return;
+
       try {
         setLoading(true);
         const res = await fetch(
@@ -50,10 +54,10 @@ const NewsPosts = ({ data, status }: Props) => {
         const posts = await res.json();
 
         if (posts.data.length > 0) {
-          console.log(posts.data);
-          setNewData([...newData, ...posts.data]);
+          setNewData((prevData) => [...prevData, ...posts.data]);
           setPage((prev) => prev + 1);
         } else {
+          setHasMoreData(false);
           console.log("Não há mais dados para carregar.");
         }
       } catch (error) {
@@ -63,25 +67,25 @@ const NewsPosts = ({ data, status }: Props) => {
           description:
             "We are preparing posts for you to come back later to see.",
         });
-        // Lidar com o erro conforme necessário
       } finally {
         setLoading(false);
       }
     };
 
-    if (inView) {
+    if (inView && hasMoreData) {
       getData();
     }
-  }, [inView]);
+  }, [inView, page, hasMoreData, isLoading]);
 
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-4 w-full gap-2">
         {status === 429 && (
-          <div className="text-muted-foreground">
+          <div className="text-red-500">
             We are preparing posts for you to come back later to see. 😊👌
           </div>
         )}
+
         {newData.length > 0 && (
           <>
             {newData.map((post) => (
@@ -89,7 +93,7 @@ const NewsPosts = ({ data, status }: Props) => {
                 href={`/post/${post.owner_username}/${post.slug}`}
                 key={post.id}
               >
-                <Card>
+                <Card className="h-96">
                   <div className="h-60">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -117,7 +121,7 @@ const NewsPosts = ({ data, status }: Props) => {
           </>
         )}
       </div>
-      {newData.length > 0 && !isLoading && <div ref={ref} />}
+      {hasMoreData && newData.length > 0 && !isLoading && <div ref={ref} />}
       <div className="flex items-center justify-center">
         <FadeLoader loading={isLoading} color={"cyan"} />
       </div>

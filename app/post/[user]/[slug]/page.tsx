@@ -25,8 +25,8 @@ const Post = async ({ params }: { params: { user: string; slug: string } }) => {
     `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents/${params.user}/${params.slug}`
   ).then((res) => res.json());
 
-  const data = post.data;
-  if (!data) {
+  console.log(post);
+  if (post.error_id) {
     return (
       <div className="h-full">
         <div className="container  h-full flex flex-col items-center justify-center gap-2 w-full">
@@ -41,8 +41,8 @@ const Post = async ({ params }: { params: { user: string; slug: string } }) => {
     <div className="w-full">
       <div className="container flex flex-col gap-2 w-full">
         <ModeToggle />
-        <PostHeader post={data} />
-        <PostBody post={data} />
+        <PostHeader post={post} />
+        <PostBody post={post} />
       </div>
     </div>
   );
