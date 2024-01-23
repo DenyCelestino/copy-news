@@ -6,7 +6,7 @@ import OldPosts from "../old-posts";
 
 export const Filter = async () => {
   const news = await fetch(
-    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=30&strategy=new`,
+    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=100&strategy=new`,
     {
       cache: "no-store",
     }
@@ -15,13 +15,13 @@ export const Filter = async () => {
   console.log(news);
 
   const relevant = await fetch(
-    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=30&strategy=relevant`,
+    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=100&strategy=relevant`,
     {
       cache: "no-store",
     }
   ).then((res) => res.json());
   const old = await fetch(
-    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=30&strategy=old`,
+    `${process.env.NEXT_PUBLIC_URL_BASE_URL}contents?page=1&per_page=100&strategy=old`,
     {
       cache: "no-store",
     }

@@ -54,8 +54,8 @@ const NewsPosts = ({ data, status }: Props) => {
         const posts = await res.json();
 
         if (posts.data.length > 0) {
-          setNewData((prevData) => [...prevData, ...posts.data]);
-          setPage((prev) => prev + 1);
+          setNewData((prevData) => [...prevData, ...posts]);
+          setPage((prevPage) => prevPage + 1);
         } else {
           setHasMoreData(false);
           console.log("Não há mais dados para carregar.");
@@ -72,7 +72,7 @@ const NewsPosts = ({ data, status }: Props) => {
       }
     };
 
-    if (inView && hasMoreData) {
+    if (inView) {
       getData();
     }
   }, [inView, page, hasMoreData, isLoading]);
@@ -85,7 +85,6 @@ const NewsPosts = ({ data, status }: Props) => {
             We are preparing posts for you to come back later to see. 😊👌
           </div>
         )}
-
         {newData.length > 0 && (
           <>
             {newData.map((post) => (
@@ -109,9 +108,9 @@ const NewsPosts = ({ data, status }: Props) => {
                     <span className="text-sm text-muted-foreground">
                       {new Date(post.published_at).toDateString()}
                     </span>
-                    <CardTitle>
-                      {post.title.length > 176
-                        ? `${post.title.substring(0, 176)}...`
+                    <CardTitle className="text-lg">
+                      {post.title.length > 40
+                        ? `${post.title.substring(0, 40)}...`
                         : post.title}
                     </CardTitle>
                   </CardHeader>
